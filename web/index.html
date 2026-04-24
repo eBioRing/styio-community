@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Styio Community Forum</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-grid" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="6" height="6"></rect>
+        <rect x="14" y="4" width="6" height="6"></rect>
+        <rect x="4" y="14" width="6" height="6"></rect>
+        <rect x="14" y="14" width="6" height="6"></rect>
+      </symbol>
+      <symbol id="icon-code" viewBox="0 0 24 24">
+        <path d="m9 18-6-6 6-6"></path>
+        <path d="m15 6 6 6-6 6"></path>
+      </symbol>
+      <symbol id="icon-monitor" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="12" rx="1"></rect>
+        <path d="M8 20h8"></path>
+        <path d="M12 16v4"></path>
+      </symbol>
+      <symbol id="icon-spark" viewBox="0 0 24 24">
+        <path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"></path>
+      </symbol>
+      <symbol id="icon-help" viewBox="0 0 24 24">
+        <path d="M9.5 9a3 3 0 1 1 4.8 2.4c-1.2.8-2.3 1.5-2.3 3.1"></path>
+        <path d="M12 19h.01"></path>
+      </symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path d="M20 6v5h-5"></path>
+        <path d="M4 18v-5h5"></path>
+        <path d="M19 11a7 7 0 0 0-12.2-4"></path>
+        <path d="M5 13a7 7 0 0 0 12.2 4"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </symbol>
+      <symbol id="icon-database" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+        <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+        <path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+      </symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 21a8 8 0 0 1 16 0"></path>
+      </symbol>
+      <symbol id="icon-title" viewBox="0 0 24 24">
+        <path d="M4 6h16"></path>
+        <path d="M8 6v12"></path>
+        <path d="M16 6v12"></path>
+      </symbol>
+      <symbol id="icon-tag" viewBox="0 0 24 24">
+        <path d="M20 13 11 22 2 13V4h9l9 9z"></path>
+        <circle cx="7.5" cy="9.5" r="1"></circle>
+      </symbol>
+      <symbol id="icon-lines" viewBox="0 0 24 24">
+        <path d="M5 7h14"></path>
+        <path d="M5 12h14"></path>
+        <path d="M5 17h9"></path>
+      </symbol>
+      <symbol id="icon-send" viewBox="0 0 24 24">
+        <path d="m22 2-7 20-4-9-9-4 20-7z"></path>
+      </symbol>
+      <symbol id="icon-message" viewBox="0 0 24 24">
+        <path d="M4 5h16v11H8l-4 4V5z"></path>
+      </symbol>
+      <symbol id="icon-signal" viewBox="0 0 24 24">
+        <path d="M12 21s-7-4.4-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.6-7 11-7 11z"></path>
+      </symbol>
+      <symbol id="icon-eye" viewBox="0 0 24 24">
+        <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </symbol>
+    </svg>
+    <main class="forum-shell">
+      <header class="toon-appbar">
+        <a class="brand-mark" href="/" aria-label="Styio Community Forum">
+          <span class="brand-icon">S</span>
+          <span>
+            <strong>Styio Community</strong>
+            <small>Forum Board</small>
+          </span>
+        </a>
+
+        <nav class="top-nav" aria-label="Forum sections">
+          <button type="button" class="nav-filter is-active" data-filter="all">ALL</button>
+          <button type="button" class="nav-filter" data-filter="syntax">LANGUAGE</button>
+          <button type="button" class="nav-filter" data-filter="ide">TOOLCHAIN</button>
+          <button type="button" class="nav-filter" data-filter="showcase">SHOWCASE</button>
+          <button type="button" class="nav-filter" data-filter="help">HELP</button>
+        </nav>
+
+        <div class="top-actions">
+          <button id="refreshPosts" class="toon-button icon-button is-blue" type="button" aria-label="Refresh" title="Refresh">
+            <svg class="icon"><use href="#icon-refresh"></use></svg>
+          </button>
+          <button id="focusComposer" class="toon-button icon-button is-red" type="button" aria-label="New thread" title="New thread">
+            <svg class="icon"><use href="#icon-plus"></use></svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="hero-panel" aria-labelledby="forumTitle">
+        <div class="card-burst" aria-label="Styio">
+          <svg class="burst-rays" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <g>
+              <line x1="50" y1="50" x2="2" y2="4"></line>
+              <line x1="50" y1="50" x2="16" y2="0"></line>
+              <line x1="50" y1="50" x2="36" y2="0"></line>
+              <line x1="50" y1="50" x2="64" y2="0"></line>
+              <line x1="50" y1="50" x2="86" y2="0"></line>
+              <line x1="50" y1="50" x2="98" y2="7"></line>
+              <line x1="50" y1="50" x2="100" y2="38"></line>
+              <line x1="50" y1="50" x2="100" y2="72"></line>
+              <line x1="50" y1="50" x2="78" y2="100"></line>
+              <line x1="50" y1="50" x2="48" y2="100"></line>
+              <line x1="50" y1="50" x2="20" y2="100"></line>
+              <line x1="50" y1="50" x2="0" y2="74"></line>
+              <line x1="50" y1="50" x2="0" y2="35"></line>
+            </g>
+          </svg>
+          <div class="styio-card card-s" data-rank="S">S</div>
+          <div class="styio-card card-t" data-rank="T">T</div>
+          <div class="styio-card card-y" data-rank="Y">Y</div>
+          <div class="styio-card card-i" data-rank="I">I</div>
+          <div class="styio-card card-o" data-rank="O">O</div>
+        </div>
+      </section>
+
+      <section class="forum-grid">
+        <section class="discussion-area" aria-label="Discussion">
+          <section class="feed-column" aria-label="Forum threads">
+            <div class="toolbar">
+              <label class="search-box" for="searchInput">
+                <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
+                <input id="searchInput" type="search" placeholder="标题、正文、标签">
+              </label>
+              <button id="seedDemo" class="toon-button icon-button is-yellow" type="button" aria-label="Seed board" title="Seed board">
+                <svg class="icon"><use href="#icon-database"></use></svg>
+              </button>
+            </div>
+            <div id="postList" class="post-list"></div>
+          </section>
+        </section>
+
+        <section id="composerCard" class="composer-card" aria-labelledby="composerTitle">
+          <div class="section-heading">
+            <span class="comic-badge is-blue"><svg class="icon"><use href="#icon-plus"></use></svg></span>
+            <h2 id="composerTitle">POST</h2>
+          </div>
+          <form id="postForm" class="post-form">
+            <label>
+              <span><svg class="icon"><use href="#icon-user"></use></svg></span>
+              <input name="author" autocomplete="name" value="Styio User" maxlength="48" required>
+            </label>
+            <label>
+              <span><svg class="icon"><use href="#icon-title"></use></svg></span>
+              <input name="title" maxlength="120" required placeholder="一句话说明讨论主题">
+            </label>
+            <label>
+              <span><svg class="icon"><use href="#icon-grid"></use></svg></span>
+              <select name="category" required>
+                <option value="syntax">Language</option>
+                <option value="ide">Toolchain</option>
+                <option value="showcase">Showcase</option>
+                <option value="help">Help</option>
+                <option value="general">General</option>
+                <option value="announcements">Announcements</option>
+              </select>
+            </label>
+            <label>
+              <span><svg class="icon"><use href="#icon-tag"></use></svg></span>
+              <input name="tags" maxlength="120" placeholder="parser, adapter, snippets">
+            </label>
+            <label class="body-field">
+              <span><svg class="icon"><use href="#icon-lines"></use></svg></span>
+              <textarea name="body" rows="6" maxlength="4000" required placeholder="贴出背景、例子、问题或建议。"></textarea>
+            </label>
+            <button class="toon-button is-red is-wide" type="submit">
+              <svg class="icon"><use href="#icon-send"></use></svg>
+              <span>发布</span>
+            </button>
+          </form>
+        </section>
+      </section>
+
+      <p id="message" class="message" role="status"></p>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

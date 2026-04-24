@@ -59,6 +59,10 @@
         <path d="M19 12H5"></path>
         <path d="m12 19-7-7 7-7"></path>
       </symbol>
+      <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+        <path d="M5 12h14"></path>
+        <path d="m12 5 7 7-7 7"></path>
+      </symbol>
       <symbol id="icon-lines" viewBox="0 0 24 24">
         <path d="M5 7h14"></path>
         <path d="M5 12h14"></path>
@@ -69,36 +73,52 @@
     <main class="forum-shell thread-shell">
       <header class="toon-appbar">
         <a class="brand-mark" href="/" aria-label="Styio Community Forum">
-          <span class="brand-icon">S</span>
-          <span>
-            <strong>Styio Community</strong>
-            <small>Post</small>
+          <span class="brand-cards" aria-label="Styio">
+            <span class="brand-card brand-card-s" data-rank="S">S</span>
+            <span class="brand-card brand-card-t" data-rank="T">T</span>
+            <span class="brand-card brand-card-y" data-rank="Y">Y</span>
+            <span class="brand-card brand-card-i" data-rank="I">I</span>
+            <span class="brand-card brand-card-o" data-rank="O">O</span>
+          </span>
+          <span class="brand-title-stack">
+            <strong class="brand-super-title">Community</strong>
           </span>
         </a>
 
-        <nav class="top-nav" aria-label="Post navigation">
-          <a class="nav-filter is-all" href="/">
-            <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
-            <span>ALL</span>
-          </a>
-          <a class="nav-filter is-red" href="/#composerCard">
-            <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
-            <span>POST</span>
-          </a>
-        </nav>
-
         <div class="top-actions">
-          <a class="toon-button icon-button is-blue" href="/" aria-label="Back" title="Back">
+          <a class="toon-button icon-button" href="/" aria-label="Back" title="Back">
             <svg class="icon"><use href="#icon-arrow-left"></use></svg>
           </a>
         </div>
       </header>
 
+      <nav class="top-nav filter-nav thread-nav" aria-label="Post navigation">
+        <a class="nav-filter is-all" href="/">
+          <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
+          <span>ALL</span>
+        </a>
+        <a class="nav-filter is-submit" href="/#composerCard">
+          <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+          <span>POST</span>
+        </a>
+      </nav>
+
       <section class="thread-main">
         <article id="postDetail" class="detail-card" aria-live="polite"></article>
 
+        <nav id="threadPager" class="thread-pager-bar" aria-label="Thread navigation">
+          <a id="prevPost" class="toon-button pager-link is-disabled" aria-label="Previous post" aria-disabled="true">
+            <svg class="icon"><use href="#icon-arrow-left"></use></svg>
+            <span>PREV</span>
+          </a>
+          <a id="nextPost" class="toon-button pager-link is-disabled" aria-label="Next post" aria-disabled="true">
+            <span>NEXT</span>
+            <svg class="icon"><use href="#icon-arrow-right"></use></svg>
+          </a>
+        </nav>
+
         <section class="reply-card">
-          <div class="section-heading">
+          <div class="section-heading reply-heading">
             <span class="comic-badge is-blue"><svg class="icon"><use href="#icon-message"></use></svg></span>
             <h2>REPLY</h2>
           </div>
@@ -106,7 +126,7 @@
           <form id="replyForm" class="comment-form reply-composer">
             <div id="replyAuthorSlot" class="field-slot"></div>
             <div id="replyBodySlot" class="field-slot"></div>
-            <button class="toon-button is-green composer-send" type="submit">
+            <button class="toon-button is-submit composer-send" type="submit">
               <svg class="icon"><use href="#icon-send"></use></svg>
               <span>发送</span>
             </button>

@@ -76,9 +76,10 @@ export function iconField({
   form,
 } = {}) {
   const label = document.createElement("label");
-  label.className = className;
+  label.className = ["icon-field", className].filter(Boolean).join(" ");
 
   const iconShell = document.createElement("span");
+  iconShell.className = "icon-field-icon";
   iconShell.append(icon(iconName));
 
   const field = document.createElement(control);
@@ -94,6 +95,34 @@ export function iconField({
 
   label.append(iconShell, field);
   return label;
+}
+
+export function iconTitle({
+  className = "",
+  href,
+  text,
+  iconName,
+  markerClassName = "",
+  markerLabel = "",
+  markerTitle = markerLabel,
+  as = "span",
+} = {}) {
+  const title = document.createElement(href ? "a" : as);
+  title.className = ["icon-title", className].filter(Boolean).join(" ");
+  if (href) title.href = href;
+
+  const marker = document.createElement("span");
+  marker.className = ["title-marker", markerClassName].filter(Boolean).join(" ");
+  if (markerLabel) marker.setAttribute("aria-label", markerLabel);
+  if (markerTitle) marker.title = markerTitle;
+  marker.append(icon(iconName));
+
+  const label = document.createElement("span");
+  label.className = "icon-title-text";
+  label.textContent = text || "";
+
+  title.append(marker, label);
+  return title;
 }
 
 export function userField(options = {}) {
@@ -125,9 +154,10 @@ export function textAreaField(options = {}) {
 
 export function categorySelectField({ className = "category-field", name = "category", value = "syntax" } = {}) {
   const label = document.createElement("label");
-  label.className = className;
+  label.className = ["icon-field", className].filter(Boolean).join(" ");
 
   const iconShell = document.createElement("span");
+  iconShell.className = "icon-field-icon";
   iconShell.append(icon("icon-grid"));
 
   const select = document.createElement("select");

@@ -1,13 +1,14 @@
 import {
+  authorTimestamp,
   bindUserFieldColor,
   categoryClass,
+  categoryIcons,
   categorySelectField,
   emptyState,
-  icon,
   iconField,
+  iconTitle,
   postFooter,
   postPreview,
-  postTopline,
   readPostForm,
   relativeTime,
   tagsField,
@@ -134,8 +135,9 @@ function renderStats() {
 }
 
 function renderFilters() {
+  const activeFilter = state.filter === "all" ? "" : state.filter;
   for (const button of els.navFilters) {
-    button.classList.toggle("is-active", button.dataset.filter === state.filter);
+    button.classList.toggle("is-active", button.dataset.filter === activeFilter);
   }
 }
 
@@ -157,18 +159,24 @@ function renderPostCard(post) {
     window.location.href = card.dataset.href;
   });
 
-  const title = document.createElement("a");
-  title.className = "post-title-button";
-  title.href = postHref(post.id);
-  if (post.pinned) {
-    title.append(icon("icon-spark"), document.createTextNode(post.title));
-  } else {
-    title.textContent = post.title;
-  }
+  const title = iconTitle({
+    className: "post-title-button",
+    href: postHref(post.id),
+    text: post.title,
+    iconName: post.pinned ? "icon-pin" : categoryIcons[post.category] || "icon-grid",
+    markerClassName: post.pinned ? "is-pinned" : "is-category",
+    markerLabel: post.pinned ? "Pinned" : "Category",
+  });
+
+  const header = document.createElement("div");
+  header.className = "post-card-header";
+  header.append(
+    title,
+    authorTimestamp({ author: post.author, timestamp: post.updated_at || post.created_at, format: relativeTime }),
+  );
 
   card.append(
-    postTopline(post, { variant: "card", timeFormatter: relativeTime }),
-    title,
+    header,
     postPreview(post),
     postFooter(post, { variant: "card", tagLimit: 3 }),
   );
@@ -190,18 +198,24 @@ async function createPost(event) {
 
 async function refreshBoard() {
   if (!els.refreshPosts) return;
+  let refreshed = false;
   els.refreshPosts.disabled = true;
   els.refreshPosts.classList.add("is-loading");
   els.refreshPosts.setAttribute("aria-busy", "true");
   try {
     await loadPosts({ seedWhenEmpty: false });
-    setMessage("已刷新");
+    refreshed = true;
+    setMessage("");
   } catch (error) {
     setMessage(error.message, true);
   } finally {
     els.refreshPosts.disabled = false;
     els.refreshPosts.classList.remove("is-loading");
     els.refreshPosts.removeAttribute("aria-busy");
+    if (refreshed) {
+      els.refreshPosts.classList.add("is-confirmed");
+      window.setTimeout(() => els.refreshPosts?.classList.remove("is-confirmed"), 320);
+    }
   }
 }
 

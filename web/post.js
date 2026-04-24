@@ -15,6 +15,7 @@ import {
 
 const state = {
   post: null,
+  posts: [],
   postId: postIdFromLocation(),
   hasReacted: false,
   currentAuthor: "Styio User",
@@ -26,6 +27,9 @@ const els = {
   replyForm: document.querySelector("#replyForm"),
   replyAuthorSlot: document.querySelector("#replyAuthorSlot"),
   replyBodySlot: document.querySelector("#replyBodySlot"),
+  threadPager: document.querySelector("#threadPager"),
+  prevPost: document.querySelector("#prevPost"),
+  nextPost: document.querySelector("#nextPost"),
   message: document.querySelector("#message"),
 };
 
@@ -49,8 +53,12 @@ async function loadPost() {
   if (!state.postId) {
     throw new Error("missing post id");
   }
-  const payload = await api(`/api/forum/posts/${encodeURIComponent(state.postId)}`);
-  state.post = payload.post;
+  const [postPayload, listPayload] = await Promise.all([
+    api(`/api/forum/posts/${encodeURIComponent(state.postId)}`),
+    api("/api/forum/posts"),
+  ]);
+  state.post = postPayload.post;
+  state.posts = listPayload.posts || [];
   render();
 }
 
@@ -75,6 +83,7 @@ function render() {
   if (!state.post) return;
   document.title = `${state.post.title} / Styio Community`;
   renderPostDetail();
+  renderPostPager();
   renderReplies();
   updateReplyAuthorColor();
 }
@@ -104,6 +113,34 @@ function renderPostDetail() {
     }),
   );
   els.postDetail.replaceChildren(wrapper);
+}
+
+function renderPostPager() {
+  if (els.threadPager) {
+    els.threadPager.className = ["thread-pager-bar", categoryClass[state.post?.category] || "is-ink"].join(" ");
+  }
+  const index = state.posts.findIndex((post) => post.id === state.post?.id);
+  const previous = index > 0 ? state.posts[index - 1] : null;
+  const next = index >= 0 && index < state.posts.length - 1 ? state.posts[index + 1] : null;
+  updatePagerLink(els.prevPost, previous, "Previous post");
+  updatePagerLink(els.nextPost, next, "Next post");
+}
+
+function updatePagerLink(link, post, label) {
+  if (!link) return;
+  if (!post) {
+    link.removeAttribute("href");
+    link.classList.add("is-disabled");
+    link.setAttribute("aria-disabled", "true");
+    link.setAttribute("aria-label", label);
+    link.title = label;
+    return;
+  }
+  link.href = `/posts/${encodeURIComponent(post.id)}`;
+  link.classList.remove("is-disabled");
+  link.removeAttribute("aria-disabled");
+  link.setAttribute("aria-label", `${label}: ${post.title}`);
+  link.title = post.title;
 }
 
 function renderReplies() {

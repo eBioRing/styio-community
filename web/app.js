@@ -1,34 +1,24 @@
+import {
+  bindUserFieldColor,
+  categoryClass,
+  categorySelectField,
+  emptyState,
+  icon,
+  iconField,
+  postFooter,
+  postPreview,
+  postTopline,
+  readPostForm,
+  relativeTime,
+  tagsField,
+  textAreaField,
+  userField,
+} from "./components.js";
+
 const state = {
   posts: [],
   filter: "all",
   query: "",
-};
-
-const categoryLabels = {
-  announcements: "ANNOUNCE",
-  syntax: "LANGUAGE",
-  ide: "TOOLCHAIN",
-  showcase: "SHOWCASE",
-  help: "HELP",
-  general: "GENERAL",
-};
-
-const categoryClass = {
-  announcements: "is-yellow",
-  syntax: "is-red",
-  ide: "is-blue",
-  showcase: "is-green",
-  help: "is-purple",
-  general: "is-ink",
-};
-
-const categoryIcons = {
-  announcements: "icon-spark",
-  syntax: "icon-code",
-  ide: "icon-monitor",
-  showcase: "icon-spark",
-  help: "icon-help",
-  general: "icon-grid",
 };
 
 const els = {
@@ -38,16 +28,23 @@ const els = {
   postList: document.querySelector("#postList"),
   composerCard: document.querySelector("#composerCard"),
   postForm: document.querySelector("#postForm"),
+  postAuthorSlot: document.querySelector("#postAuthorSlot"),
+  postTitleSlot: document.querySelector("#postTitleSlot"),
+  postBodySlot: document.querySelector("#postBodySlot"),
+  postCategorySlot: document.querySelector("#postCategorySlot"),
+  postTagsSlot: document.querySelector("#postTagsSlot"),
   searchInput: document.querySelector("#searchInput"),
-  seedDemo: document.querySelector("#seedDemo"),
   refreshPosts: document.querySelector("#refreshPosts"),
   focusComposer: document.querySelector("#focusComposer"),
   navFilters: Array.from(document.querySelectorAll(".nav-filter")),
   message: document.querySelector("#message"),
 };
 
+mountPostComposerFields();
+
 async function api(path, options = {}) {
   const response = await fetch(path, {
+    cache: "no-store",
     headers: { "Content-Type": "application/json" },
     ...options,
   });
@@ -68,6 +65,39 @@ async function loadPosts({ seedWhenEmpty = true } = {}) {
   }
 
   render();
+}
+
+function mountPostComposerFields() {
+  const authorField = userField({
+    className: "composer-author-field",
+    form: "postForm",
+    autocomplete: "name",
+  });
+  els.postAuthorSlot?.replaceChildren(authorField);
+  bindUserFieldColor(authorField);
+
+  els.postTitleSlot?.replaceChildren(
+    iconField({
+      className: "title-field",
+      iconName: "icon-title",
+      name: "title",
+      maxLength: 120,
+      required: true,
+      placeholder: "一句话说明讨论主题",
+    }),
+  );
+  els.postBodySlot?.replaceChildren(
+    textAreaField({
+      className: "body-field",
+      name: "body",
+      rows: 6,
+      maxLength: 4000,
+      required: true,
+      placeholder: "贴出背景、例子、问题或建议。",
+    }),
+  );
+  els.postCategorySlot?.replaceChildren(categorySelectField());
+  els.postTagsSlot?.replaceChildren(tagsField({ placeholder: "parser, adapter, snippets" }));
 }
 
 function visiblePosts() {
@@ -120,18 +150,12 @@ function renderPostList() {
 
 function renderPostCard(post) {
   const card = document.createElement("article");
-  card.className = "post-card";
+  card.className = ["post-card", categoryClass[post.category] || "is-ink"].join(" ");
   card.dataset.href = postHref(post.id);
   card.addEventListener("click", (event) => {
-    if (event.target.closest("a")) return;
+    if (event.target.closest("a, button")) return;
     window.location.href = card.dataset.href;
   });
-
-  const top = document.createElement("div");
-  top.className = "post-topline";
-  const category = categoryPill(post.category);
-  const meta = iconMeta("icon-user", `${post.author} / ${relativeTime(post.updated_at || post.created_at)}`);
-  top.append(category, meta);
 
   const title = document.createElement("a");
   title.className = "post-title-button";
@@ -142,94 +166,13 @@ function renderPostCard(post) {
     title.textContent = post.title;
   }
 
-  const tagRow = document.createElement("div");
-  tagRow.className = "tag-row";
-  for (const tag of (post.tags || []).slice(0, 3)) {
-    const item = document.createElement("span");
-    item.append(icon("icon-tag"), document.createTextNode(tag));
-    tagRow.append(item);
-  }
-
-  const stats = document.createElement("div");
-  stats.className = "post-stats";
-  stats.append(
-    statChip("icon-message", post.comments?.length || 0, "Replies"),
-    statChip("icon-signal", post.reactions || 0, "Signals"),
-    statChip("icon-eye", post.views || 1, "Views"),
+  card.append(
+    postTopline(post, { variant: "card", timeFormatter: relativeTime }),
+    title,
+    postPreview(post),
+    postFooter(post, { variant: "card", tagLimit: 3 }),
   );
-
-  card.append(top, title, tagRow, stats);
   return card;
-}
-
-function statChip(iconName, value, label) {
-  const chip = document.createElement("span");
-  chip.className = "stat-chip";
-  chip.title = label;
-  chip.setAttribute("aria-label", `${label}: ${value}`);
-  chip.append(icon(iconName));
-  const number = document.createElement("strong");
-  number.textContent = String(value);
-  chip.append(number);
-  return chip;
-}
-
-function emptyState(iconName, text) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "empty-state";
-  wrapper.append(icon(iconName));
-  const copy = document.createElement("span");
-  copy.textContent = text;
-  wrapper.append(copy);
-  return wrapper;
-}
-
-function categoryPill(category) {
-  const label = categoryLabels[category] || category;
-  const pill = document.createElement("span");
-  pill.className = `category-pill ${categoryClass[category] || "is-ink"}`;
-  pill.title = label;
-  pill.setAttribute("aria-label", label);
-  const text = document.createElement("span");
-  text.textContent = label;
-  pill.append(icon(categoryIcons[category] || "icon-grid"), text);
-  return pill;
-}
-
-function iconMeta(iconName, text) {
-  const meta = document.createElement("span");
-  meta.className = "icon-meta";
-  meta.append(icon(iconName), document.createTextNode(text));
-  return meta;
-}
-
-function icon(name) {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.classList.add("icon");
-  svg.setAttribute("aria-hidden", "true");
-  const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-  use.setAttribute("href", `#${name}`);
-  svg.append(use);
-  return svg;
-}
-
-function readPostForm(form) {
-  const data = new FormData(form);
-  return {
-    author: String(data.get("author") || ""),
-    title: String(data.get("title") || ""),
-    category: String(data.get("category") || "general"),
-    tags: splitTags(String(data.get("tags") || "")),
-    body: String(data.get("body") || ""),
-  };
-}
-
-function splitTags(value) {
-  return value
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean)
-    .slice(0, 5);
 }
 
 async function createPost(event) {
@@ -245,14 +188,20 @@ async function createPost(event) {
   }
 }
 
-async function seedBoard() {
+async function refreshBoard() {
+  if (!els.refreshPosts) return;
+  els.refreshPosts.disabled = true;
+  els.refreshPosts.classList.add("is-loading");
+  els.refreshPosts.setAttribute("aria-busy", "true");
   try {
-    const payload = await api("/api/forum/posts/demo", { method: "POST", body: "{}" });
-    state.posts = payload.posts || [];
-    render();
-    setMessage("已载入");
+    await loadPosts({ seedWhenEmpty: false });
+    setMessage("已刷新");
   } catch (error) {
     setMessage(error.message, true);
+  } finally {
+    els.refreshPosts.disabled = false;
+    els.refreshPosts.classList.remove("is-loading");
+    els.refreshPosts.removeAttribute("aria-busy");
   }
 }
 
@@ -270,20 +219,6 @@ function postHref(postId) {
   return `/posts/${encodeURIComponent(postId)}`;
 }
 
-function relativeTime(value) {
-  if (!value) return "now";
-  const then = new Date(value).getTime();
-  if (!Number.isFinite(then)) return "now";
-  const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000));
-  if (seconds < 60) return "now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-}
-
 els.navFilters.forEach((button) => {
   button.addEventListener("click", () => setFilter(button.dataset.filter || "all"));
 });
@@ -291,8 +226,7 @@ els.searchInput.addEventListener("input", () => {
   state.query = els.searchInput.value;
   renderPostList();
 });
-els.seedDemo.addEventListener("click", seedBoard);
-els.refreshPosts.addEventListener("click", () => loadPosts({ seedWhenEmpty: false }));
+els.refreshPosts.addEventListener("click", refreshBoard);
 els.focusComposer.addEventListener("click", () => {
   els.composerCard.scrollIntoView({ behavior: "smooth", block: "start" });
   window.setTimeout(() => els.postForm.elements.title.focus(), 280);

@@ -1,44 +1,40 @@
-const categoryLabels = {
-  announcements: "ANNOUNCE",
-  syntax: "LANGUAGE",
-  ide: "TOOLCHAIN",
-  showcase: "SHOWCASE",
-  help: "HELP",
-  general: "GENERAL",
-};
-
-const categoryClass = {
-  announcements: "is-yellow",
-  syntax: "is-red",
-  ide: "is-blue",
-  showcase: "is-green",
-  help: "is-purple",
-  general: "is-ink",
-};
-
-const categoryIcons = {
-  announcements: "icon-spark",
-  syntax: "icon-code",
-  ide: "icon-monitor",
-  showcase: "icon-spark",
-  help: "icon-help",
-  general: "icon-grid",
-};
+import {
+  applyUserColor,
+  bindUserFieldColor,
+  categoryClass,
+  emptyState,
+  formatShortDate,
+  initials,
+  postFooter,
+  postTopline,
+  relativeTime,
+  sameAuthor,
+  textAreaField,
+  userField,
+} from "./components.js";
 
 const state = {
   post: null,
   postId: postIdFromLocation(),
+  hasReacted: false,
+  currentAuthor: "Styio User",
 };
 
 const els = {
   postDetail: document.querySelector("#postDetail"),
   replyList: document.querySelector("#replyList"),
   replyForm: document.querySelector("#replyForm"),
+  replyAuthorSlot: document.querySelector("#replyAuthorSlot"),
+  replyBodySlot: document.querySelector("#replyBodySlot"),
   message: document.querySelector("#message"),
 };
 
+let updateReplyAuthorColor = () => {};
+mountReplyComposerFields();
+
 async function api(path, options = {}) {
   const response = await fetch(path, {
+    cache: "no-store",
     headers: { "Content-Type": "application/json" },
     ...options,
   });
@@ -58,24 +54,36 @@ async function loadPost() {
   render();
 }
 
+function mountReplyComposerFields() {
+  const authorField = userField({ value: state.currentAuthor });
+  els.replyAuthorSlot?.replaceChildren(authorField);
+  updateReplyAuthorColor = bindUserFieldColor(authorField, currentAuthor);
+
+  els.replyBodySlot?.replaceChildren(
+    textAreaField({
+      className: "composer-body",
+      name: "body",
+      rows: 4,
+      maxLength: 2000,
+      required: true,
+      placeholder: "加入你的观点、复现步骤或补充资料。",
+    }),
+  );
+}
+
 function render() {
   if (!state.post) return;
   document.title = `${state.post.title} / Styio Community`;
   renderPostDetail();
   renderReplies();
+  updateReplyAuthorColor();
 }
 
 function renderPostDetail() {
   const post = state.post;
+  els.postDetail.className = ["detail-card", categoryClass[post.category] || "is-ink"].join(" ");
   const wrapper = document.createElement("div");
   wrapper.className = "thread-detail";
-
-  const header = document.createElement("div");
-  header.className = "detail-header";
-  header.append(
-    categoryPill(post.category),
-    iconMeta("icon-user", `${post.author} / ${formatDate(post.created_at)}`),
-  );
 
   const title = document.createElement("h1");
   title.textContent = post.title;
@@ -84,30 +92,17 @@ function renderPostDetail() {
   body.className = "thread-body";
   body.textContent = post.body;
 
-  const tagRow = document.createElement("div");
-  tagRow.className = "tag-row";
-  for (const tag of post.tags || []) {
-    const item = document.createElement("span");
-    item.append(icon("icon-tag"), document.createTextNode(tag));
-    tagRow.append(item);
-  }
-
-  const actionRow = document.createElement("div");
-  actionRow.className = "thread-actions";
-  const react = document.createElement("button");
-  react.className = "toon-button is-yellow";
-  react.type = "button";
-  react.append(icon("icon-signal"), textSpan(String(post.reactions || 0)));
-  react.addEventListener("click", reactToPost);
-  const stats = document.createElement("div");
-  stats.className = "post-stats";
-  stats.append(
-    statChip("icon-message", post.comments?.length || 0, "Replies"),
-    statChip("icon-eye", post.views || 1, "Views"),
+  wrapper.append(
+    postTopline(post, { variant: "detail", timeFormatter: formatShortDate }),
+    title,
+    body,
+    postFooter(post, {
+      variant: "detail",
+      tagLimit: Infinity,
+      liked: state.hasReacted,
+      onReact: reactToPost,
+    }),
   );
-  actionRow.append(react, stats);
-
-  wrapper.append(header, title, body, tagRow, actionRow);
   els.postDetail.replaceChildren(wrapper);
 }
 
@@ -116,7 +111,7 @@ function renderReplies() {
   if (replies.length === 0) {
     const empty = document.createElement("li");
     empty.className = "reply-empty";
-    empty.append(icon("icon-message"), document.createTextNode("0"));
+    empty.append(emptyState("icon-message", "0"));
     els.replyList.replaceChildren(empty);
     return;
   }
@@ -125,76 +120,46 @@ function renderReplies() {
 
 function renderReply(comment) {
   const item = document.createElement("li");
-  const head = document.createElement("div");
-  head.className = "reply-head";
+  const isOwn = sameAuthor(comment.author, currentAuthor());
+  item.className = `reply-item ${isOwn ? "is-own" : "is-other"}`;
+
+  const avatar = document.createElement("span");
+  avatar.className = "reply-avatar";
+  avatar.textContent = initials(comment.author);
+  applyUserColor(avatar, comment.author);
+
+  const bubble = document.createElement("div");
+  bubble.className = "reply-bubble";
+
+  const meta = document.createElement("div");
+  meta.className = "reply-meta";
   const author = document.createElement("strong");
-  author.append(icon("icon-user"), document.createTextNode(comment.author));
-  const time = iconMeta("icon-send", relativeTime(comment.created_at));
-  head.append(author, time);
+  author.textContent = comment.author;
+  const time = document.createElement("span");
+  time.textContent = relativeTime(comment.created_at);
+  meta.append(author, time);
 
   const body = document.createElement("p");
   body.textContent = comment.body;
-  item.append(head, body);
+  bubble.append(meta, body);
+  item.append(avatar, bubble);
   return item;
-}
-
-function statChip(iconName, value, label) {
-  const chip = document.createElement("span");
-  chip.className = "stat-chip";
-  chip.title = label;
-  chip.setAttribute("aria-label", `${label}: ${value}`);
-  chip.append(icon(iconName));
-  const number = document.createElement("strong");
-  number.textContent = String(value);
-  chip.append(number);
-  return chip;
-}
-
-function categoryPill(category) {
-  const label = categoryLabels[category] || category;
-  const pill = document.createElement("span");
-  pill.className = `category-pill ${categoryClass[category] || "is-ink"}`;
-  pill.title = label;
-  pill.setAttribute("aria-label", label);
-  pill.append(icon(categoryIcons[category] || "icon-grid"), textSpan(label));
-  return pill;
-}
-
-function iconMeta(iconName, text) {
-  const meta = document.createElement("span");
-  meta.className = "icon-meta";
-  meta.append(icon(iconName), document.createTextNode(text));
-  return meta;
-}
-
-function icon(name) {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.classList.add("icon");
-  svg.setAttribute("aria-hidden", "true");
-  const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-  use.setAttribute("href", `#${name}`);
-  svg.append(use);
-  return svg;
-}
-
-function textSpan(text) {
-  const span = document.createElement("span");
-  span.textContent = text;
-  return span;
 }
 
 async function createReply(event) {
   event.preventDefault();
   const data = new FormData(els.replyForm);
+  const author = String(data.get("author") || "");
   try {
     const payload = await api(`/api/forum/posts/${encodeURIComponent(state.postId)}/comments`, {
       method: "POST",
       body: JSON.stringify({
-        author: String(data.get("author") || ""),
+        author,
         body: String(data.get("body") || ""),
       }),
     });
     els.replyForm.elements.body.value = "";
+    state.currentAuthor = author.trim() || state.currentAuthor;
     state.post = payload.post;
     render();
     setMessage("已发送");
@@ -210,6 +175,7 @@ async function reactToPost() {
       body: "{}",
     });
     state.post = payload.post;
+    state.hasReacted = true;
     render();
     setMessage("+1");
   } catch (error) {
@@ -228,30 +194,15 @@ function postIdFromLocation() {
   return new URLSearchParams(window.location.search).get("id");
 }
 
-function relativeTime(value) {
-  if (!value) return "now";
-  const then = new Date(value).getTime();
-  if (!Number.isFinite(then)) return "now";
-  const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000));
-  if (seconds < 60) return "now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+function currentAuthor() {
+  return String(els.replyForm?.elements.author?.value || state.currentAuthor || "Styio User").trim();
 }
 
-function formatDate(value) {
-  if (!value) return "";
-  return new Intl.DateTimeFormat("zh-CN", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
+els.replyForm.elements.author.addEventListener("input", () => {
+  state.currentAuthor = currentAuthor();
+  updateReplyAuthorColor();
+  renderReplies();
+});
 els.replyForm.addEventListener("submit", createReply);
 loadPost().catch((error) => {
   els.postDetail.replaceChildren();

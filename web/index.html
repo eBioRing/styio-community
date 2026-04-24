@@ -45,6 +45,10 @@
         <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
         <path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
       </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4.3-4.3"></path>
+      </symbol>
       <symbol id="icon-user" viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"></circle>
         <path d="M4 21a8 8 0 0 1 16 0"></path>
@@ -70,7 +74,7 @@
         <path d="M4 5h16v11H8l-4 4V5z"></path>
       </symbol>
       <symbol id="icon-signal" viewBox="0 0 24 24">
-        <path d="M12 21s-7-4.4-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.6-7 11-7 11z"></path>
+        <path d="M12 21.2 10.5 19.9C5.4 15.3 2.6 12.7 2.6 8.9c0-3 2.3-5.3 5.3-5.3 1.7 0 3.3.8 4.1 2 .8-1.2 2.4-2 4.1-2 3 0 5.3 2.3 5.3 5.3 0 3.8-2.8 6.4-7.9 11L12 21.2z"></path>
       </symbol>
       <symbol id="icon-eye" viewBox="0 0 24 24">
         <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
@@ -88,11 +92,26 @@
         </a>
 
         <nav class="top-nav" aria-label="Forum sections">
-          <button type="button" class="nav-filter is-active" data-filter="all">ALL</button>
-          <button type="button" class="nav-filter" data-filter="syntax">LANGUAGE</button>
-          <button type="button" class="nav-filter" data-filter="ide">TOOLCHAIN</button>
-          <button type="button" class="nav-filter" data-filter="showcase">SHOWCASE</button>
-          <button type="button" class="nav-filter" data-filter="help">HELP</button>
+          <button type="button" class="nav-filter is-all is-active" data-filter="all">
+            <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
+            <span>ALL</span>
+          </button>
+          <button type="button" class="nav-filter is-red" data-filter="syntax">
+            <svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg>
+            <span>LANGUAGE</span>
+          </button>
+          <button type="button" class="nav-filter is-blue" data-filter="ide">
+            <svg class="icon" aria-hidden="true"><use href="#icon-monitor"></use></svg>
+            <span>TOOLCHAIN</span>
+          </button>
+          <button type="button" class="nav-filter is-green" data-filter="showcase">
+            <svg class="icon" aria-hidden="true"><use href="#icon-spark"></use></svg>
+            <span>SHOWCASE</span>
+          </button>
+          <button type="button" class="nav-filter is-purple" data-filter="help">
+            <svg class="icon" aria-hidden="true"><use href="#icon-help"></use></svg>
+            <span>HELP</span>
+          </button>
         </nav>
 
         <div class="top-actions">
@@ -106,29 +125,30 @@
       </header>
 
       <section class="hero-panel" aria-labelledby="forumTitle">
-        <div class="card-burst" aria-label="Styio">
-          <svg class="burst-rays" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <g>
-              <line x1="50" y1="50" x2="2" y2="4"></line>
-              <line x1="50" y1="50" x2="16" y2="0"></line>
-              <line x1="50" y1="50" x2="36" y2="0"></line>
-              <line x1="50" y1="50" x2="64" y2="0"></line>
-              <line x1="50" y1="50" x2="86" y2="0"></line>
-              <line x1="50" y1="50" x2="98" y2="7"></line>
-              <line x1="50" y1="50" x2="100" y2="38"></line>
-              <line x1="50" y1="50" x2="100" y2="72"></line>
-              <line x1="50" y1="50" x2="78" y2="100"></line>
-              <line x1="50" y1="50" x2="48" y2="100"></line>
-              <line x1="50" y1="50" x2="20" y2="100"></line>
-              <line x1="50" y1="50" x2="0" y2="74"></line>
-              <line x1="50" y1="50" x2="0" y2="35"></line>
-            </g>
-          </svg>
-          <div class="styio-card card-s" data-rank="S">S</div>
-          <div class="styio-card card-t" data-rank="T">T</div>
-          <div class="styio-card card-y" data-rank="Y">Y</div>
-          <div class="styio-card card-i" data-rank="I">I</div>
-          <div class="styio-card card-o" data-rank="O">O</div>
+        <div class="board-background" aria-hidden="true"></div>
+        <div class="card-burst board-stack" aria-label="Styio">
+          <div class="board-rays" aria-hidden="true">
+            <span class="ray ray-1"></span>
+            <span class="ray ray-2"></span>
+            <span class="ray ray-3"></span>
+            <span class="ray ray-4"></span>
+            <span class="ray ray-5"></span>
+            <span class="ray ray-6"></span>
+            <span class="ray ray-7"></span>
+            <span class="ray ray-8"></span>
+            <span class="ray ray-9"></span>
+            <span class="ray ray-10"></span>
+            <span class="ray ray-11"></span>
+            <span class="ray ray-12"></span>
+            <span class="ray ray-13"></span>
+          </div>
+          <div class="board-cards">
+            <div class="styio-card card-s" data-rank="S">S</div>
+            <div class="styio-card card-t" data-rank="T">T</div>
+            <div class="styio-card card-y" data-rank="Y">Y</div>
+            <div class="styio-card card-i" data-rank="I">I</div>
+            <div class="styio-card card-o" data-rank="O">O</div>
+          </div>
         </div>
       </section>
 
@@ -137,50 +157,24 @@
           <section class="feed-column" aria-label="Forum threads">
             <div class="toolbar">
               <label class="search-box" for="searchInput">
-                <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
+                <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
                 <input id="searchInput" type="search" placeholder="标题、正文、标签">
               </label>
-              <button id="seedDemo" class="toon-button icon-button is-yellow" type="button" aria-label="Seed board" title="Seed board">
-                <svg class="icon"><use href="#icon-database"></use></svg>
-              </button>
             </div>
             <div id="postList" class="post-list"></div>
           </section>
         </section>
 
         <section id="composerCard" class="composer-card" aria-labelledby="composerTitle">
-          <div class="section-heading">
-            <span class="comic-badge is-blue"><svg class="icon"><use href="#icon-plus"></use></svg></span>
+          <div class="section-heading composer-heading">
+            <div id="postAuthorSlot" class="field-slot"></div>
             <h2 id="composerTitle">POST</h2>
           </div>
           <form id="postForm" class="post-form">
-            <label>
-              <span><svg class="icon"><use href="#icon-user"></use></svg></span>
-              <input name="author" autocomplete="name" value="Styio User" maxlength="48" required>
-            </label>
-            <label>
-              <span><svg class="icon"><use href="#icon-title"></use></svg></span>
-              <input name="title" maxlength="120" required placeholder="一句话说明讨论主题">
-            </label>
-            <label>
-              <span><svg class="icon"><use href="#icon-grid"></use></svg></span>
-              <select name="category" required>
-                <option value="syntax">Language</option>
-                <option value="ide">Toolchain</option>
-                <option value="showcase">Showcase</option>
-                <option value="help">Help</option>
-                <option value="general">General</option>
-                <option value="announcements">Announcements</option>
-              </select>
-            </label>
-            <label>
-              <span><svg class="icon"><use href="#icon-tag"></use></svg></span>
-              <input name="tags" maxlength="120" placeholder="parser, adapter, snippets">
-            </label>
-            <label class="body-field">
-              <span><svg class="icon"><use href="#icon-lines"></use></svg></span>
-              <textarea name="body" rows="6" maxlength="4000" required placeholder="贴出背景、例子、问题或建议。"></textarea>
-            </label>
+            <div id="postTitleSlot" class="field-slot"></div>
+            <div id="postBodySlot" class="field-slot"></div>
+            <div id="postCategorySlot" class="field-slot"></div>
+            <div id="postTagsSlot" class="field-slot"></div>
             <button class="toon-button is-red is-wide" type="submit">
               <svg class="icon"><use href="#icon-send"></use></svg>
               <span>发布</span>
@@ -191,6 +185,6 @@
 
       <p id="message" class="message" role="status"></p>
     </main>
-    <script src="/app.js" defer></script>
+    <script type="module" src="/app.js"></script>
   </body>
 </html>

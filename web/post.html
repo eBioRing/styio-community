@@ -30,6 +30,10 @@
         <path d="M9.5 9a3 3 0 1 1 4.8 2.4c-1.2.8-2.3 1.5-2.3 3.1"></path>
         <path d="M12 19h.01"></path>
       </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </symbol>
       <symbol id="icon-user" viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"></circle>
         <path d="M4 21a8 8 0 0 1 16 0"></path>
@@ -45,7 +49,7 @@
         <path d="M4 5h16v11H8l-4 4V5z"></path>
       </symbol>
       <symbol id="icon-signal" viewBox="0 0 24 24">
-        <path d="M12 21s-7-4.4-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.6-7 11-7 11z"></path>
+        <path d="M12 21.2 10.5 19.9C5.4 15.3 2.6 12.7 2.6 8.9c0-3 2.3-5.3 5.3-5.3 1.7 0 3.3.8 4.1 2 .8-1.2 2.4-2 4.1-2 3 0 5.3 2.3 5.3 5.3 0 3.8-2.8 6.4-7.9 11L12 21.2z"></path>
       </symbol>
       <symbol id="icon-eye" viewBox="0 0 24 24">
         <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
@@ -73,8 +77,14 @@
         </a>
 
         <nav class="top-nav" aria-label="Post navigation">
-          <a class="nav-filter" href="/">ALL</a>
-          <a class="nav-filter" href="/#composerCard">POST</a>
+          <a class="nav-filter is-all" href="/">
+            <svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg>
+            <span>ALL</span>
+          </a>
+          <a class="nav-filter is-red" href="/#composerCard">
+            <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+            <span>POST</span>
+          </a>
         </nav>
 
         <div class="top-actions">
@@ -93,16 +103,10 @@
             <h2>REPLY</h2>
           </div>
           <ol id="replyList" class="reply-list"></ol>
-          <form id="replyForm" class="comment-form">
-            <label>
-              <span><svg class="icon"><use href="#icon-user"></use></svg></span>
-              <input name="author" value="Styio User" maxlength="48" required>
-            </label>
-            <label>
-              <span><svg class="icon"><use href="#icon-lines"></use></svg></span>
-              <textarea name="body" rows="4" maxlength="2000" required placeholder="加入你的观点、复现步骤或补充资料。"></textarea>
-            </label>
-            <button class="toon-button is-green is-wide" type="submit">
+          <form id="replyForm" class="comment-form reply-composer">
+            <div id="replyAuthorSlot" class="field-slot"></div>
+            <div id="replyBodySlot" class="field-slot"></div>
+            <button class="toon-button is-green composer-send" type="submit">
               <svg class="icon"><use href="#icon-send"></use></svg>
               <span>发送</span>
             </button>
@@ -112,6 +116,6 @@
 
       <p id="message" class="message" role="status"></p>
     </main>
-    <script src="/post.js" defer></script>
+    <script type="module" src="/post.js"></script>
   </body>
 </html>

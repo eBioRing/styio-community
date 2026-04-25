@@ -41,6 +41,15 @@ const els = {
   message: document.querySelector("#message"),
 };
 
+const boardCardLayout = [
+  { selector: ".card-s", tx: -25.79, ty: -2.37, rot: -16 },
+  { selector: ".card-t", tx: -12.11, ty: -7.63, rot: 13 },
+  { selector: ".card-y", tx: 0.53, ty: -1.32, rot: -4, isAnchor: true },
+  { selector: ".card-i", tx: 13.68, ty: -6.32, rot: 15 },
+  { selector: ".card-o", tx: 26.84, ty: 0, rot: -10 },
+];
+
+randomizeBoardHero();
 mountPostComposerFields();
 
 async function api(path, options = {}) {
@@ -99,6 +108,82 @@ function mountPostComposerFields() {
   );
   els.postCategorySlot?.replaceChildren(categorySelectField());
   els.postTagsSlot?.replaceChildren(tagsField({ placeholder: "parser, adapter, snippets" }));
+}
+
+function randomizeBoardHero() {
+  const stack = document.querySelector(".board-stack");
+  if (!stack) return;
+
+  randomizeBoardRays(stack);
+  randomizeBoardCards(stack);
+}
+
+function randomizeBoardRays(stack) {
+  const rays = Array.from(stack.querySelectorAll(".ray"));
+  if (rays.length === 0) return;
+
+  const step = 360 / rays.length;
+  const offset = randomNumber(-step, step);
+
+  rays.forEach((ray, index) => {
+    const angle = -180 + index * step + offset + randomNumber(-step * 0.38, step * 0.38);
+    const size = randomChoice([1, 1, 2, 2, 3, 4]);
+    const alpha = randomNumber(0.055, 0.18);
+
+    ray.style.setProperty("--angle", `${angle.toFixed(2)}deg`);
+    ray.style.setProperty("--ray-size", `${size}px`);
+    ray.style.setProperty("--ray-alpha", alpha.toFixed(3));
+  });
+}
+
+function randomizeBoardCards(stack) {
+  const spread = randomNumber(1.02, 1.08);
+  const orderDelay = shuffledIndexes(boardCardLayout.length);
+
+  boardCardLayout.forEach((layout, index) => {
+    const card = stack.querySelector(layout.selector);
+    if (!card) return;
+
+    const tx = layout.tx * spread + randomNumber(-0.85, 0.85);
+    const ty = layout.ty + randomNumber(-0.85, 0.85);
+    const rot = layout.rot + randomNumber(-4.2, 4.2);
+
+    if (layout.isAnchor) {
+      stack.style.setProperty("--card-y-x", `${tx.toFixed(2)}cqw`);
+      stack.style.setProperty("--card-y-y", `${ty.toFixed(2)}cqw`);
+    } else {
+      card.style.setProperty("--tx", `${tx.toFixed(2)}cqw`);
+      card.style.setProperty("--ty", `${ty.toFixed(2)}cqw`);
+    }
+
+    card.style.setProperty("--rot", `${rot.toFixed(2)}deg`);
+    card.style.setProperty("--drop-from-x", `${randomNumber(-10, 10).toFixed(2)}cqw`);
+    card.style.setProperty("--drop-from-y", `${randomNumber(-35, -22).toFixed(2)}cqw`);
+    card.style.setProperty("--drop-from-rot", `${randomNumber(-32, 32).toFixed(2)}deg`);
+    card.style.setProperty("--drop-over-x", `${randomNumber(-1.4, 1.4).toFixed(2)}cqw`);
+    card.style.setProperty("--drop-over-y", `${randomNumber(0.9, 2.7).toFixed(2)}cqw`);
+    card.style.setProperty("--drop-over-rot", `${randomNumber(-5, 5).toFixed(2)}deg`);
+    card.style.setProperty("--drop-over-scale", randomNumber(1.035, 1.075).toFixed(3));
+    card.style.setProperty("--drop-duration", `${Math.round(randomNumber(580, 760))}ms`);
+    card.style.animationDelay = `${20 + orderDelay[index] * 76}ms`;
+  });
+}
+
+function randomNumber(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function randomChoice(values) {
+  return values[Math.floor(Math.random() * values.length)];
+}
+
+function shuffledIndexes(length) {
+  const indexes = Array.from({ length }, (_, index) => index);
+  for (let index = indexes.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [indexes[index], indexes[swapIndex]] = [indexes[swapIndex], indexes[index]];
+  }
+  return indexes;
 }
 
 function visiblePosts() {

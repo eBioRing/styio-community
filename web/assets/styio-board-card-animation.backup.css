@@ -1,0 +1,60 @@
+/*
+  Snapshot of the committed Styio Board card animation before randomized rays
+  and randomized card arrival were introduced. This file is intentionally not
+  loaded by the page; copy these rules back into web/styles.css to restore.
+*/
+
+.styio-card {
+  animation: card-drop 620ms cubic-bezier(0.22, 1.22, 0.36, 1) both;
+  transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot));
+}
+
+.card-s {
+  --rot: -16deg;
+  --tx: -25.79cqw;
+  --ty: -2.37cqw;
+  animation-delay: 20ms;
+}
+
+.card-t {
+  --rot: 13deg;
+  --tx: -12.11cqw;
+  --ty: -7.63cqw;
+  animation-delay: 100ms;
+}
+
+.card-y {
+  --rot: -4deg;
+  --tx: var(--card-y-x);
+  --ty: var(--card-y-y);
+  animation-delay: 180ms;
+}
+
+.card-i {
+  --rot: 15deg;
+  --tx: 13.68cqw;
+  --ty: -6.32cqw;
+  animation-delay: 260ms;
+}
+
+.card-o {
+  --rot: -10deg;
+  --tx: 26.84cqw;
+  --ty: 0px;
+  animation-delay: 340ms;
+}
+
+@keyframes card-drop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(0, -25cqw) rotate(0deg) scale(0.72);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(calc(var(--tx) * 0.9), calc(var(--ty) + 1.84cqw)) rotate(calc(var(--rot) * 1.1)) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "styio-community-stitch-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "theme": "node generate-theme.mjs",
+    "dark-palette": "node generate-dark-palette.mjs",
+    "functional-design": "node generate-functional-design.mjs"
+  },
+  "dependencies": {
+    "@google/stitch-sdk": "0.1.0"
+  }
+}

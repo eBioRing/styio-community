@@ -34,11 +34,21 @@ http://127.0.0.1:8765
 python3 -m unittest discover -s tests
 ```
 
-## CI Gate
+## Local CI Gate
 
-Pull requests and managed branch pushes run `ci-gate` for the repository-local
-Python test suite. The separate `styio-audit` workflow runs the external
-Styio-family audit policy.
+Pull requests and managed branch pushes run `local-ci-gate` for this
+repository's own Python test suite. This check is local to `styio-community`
+and is not a shared Styio-family audit resource. The separate `styio-audit`
+workflow runs the external Styio-family audit policy.
+
+## Governance
+
+`styio-community` uses the Apache License, Version 2.0. Source-distribution
+requirements are recorded in [LICENSE-POLICY.md](LICENSE-POLICY.md).
+Dependency authorization and usage boundaries are recorded in
+[DEPENDENCY-USAGE.md](DEPENDENCY-USAGE.md). Public-source security boundaries
+for the local server and future hosted surfaces are recorded in
+[SECURITY-BOUNDARIES.md](SECURITY-BOUNDARIES.md).
 
 ## Stitch Theme
 
@@ -48,7 +58,7 @@ The Stitch prompt lives in
 ```sh
 cd tools/stitch
 npm install
-STITCH_API_KEY=... npm run theme
+STITCH_API_KEY=<local-key> npm run theme
 ```
 
 Generated Stitch artifacts are written under `.stitch/`, which is ignored by

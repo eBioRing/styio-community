@@ -1,0 +1,30 @@
+name: ci-gate
+
+on:
+  pull_request:
+  push:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ci-gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      STYIO_PYTHON_VERSION: "3.13.5"
+
+    steps:
+      - name: Checkout styio-community
+        uses: actions/checkout@v5
+
+      - name: Set up standardized Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.STYIO_PYTHON_VERSION }}
+
+      - name: Run community tests
+        run: python3 -m unittest discover -s tests -v

@@ -34,11 +34,12 @@ http://127.0.0.1:8765
 python3 -m unittest discover -s tests
 ```
 
-## CI Gate
+## Local CI Gate
 
-Pull requests and managed branch pushes run `ci-gate` for the repository-local
-Python test suite. The separate `styio-audit` workflow runs the external
-Styio-family audit policy.
+Pull requests and managed branch pushes run `local-ci-gate` for this
+repository's own Python test suite. This check is local to `styio-community`
+and is not a shared Styio-family audit resource. The separate `styio-audit`
+workflow runs the external Styio-family audit policy.
 
 ## Governance
 

@@ -24,8 +24,8 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
   process.exit(0);
 }
 
-const apiKey = process.env.STITCH_API_KEY || process.env.STITCH_ACCESS_TOKEN;
-if (!apiKey) {
+const stitchAuth = process.env.STITCH_API_KEY || process.env.STITCH_ACCESS_TOKEN;
+if (!stitchAuth) {
   throw new Error("Set STITCH_API_KEY before running this script.");
 }
 
@@ -50,7 +50,7 @@ console.log(JSON.stringify(result, null, 2));
 async function generateWithRetry(promptText) {
   let lastError;
   for (let attempt = 1; attempt <= 2; attempt += 1) {
-    const client = new StitchToolClient({ apiKey });
+    const client = new StitchToolClient({ apiKey: stitchAuth });
     try {
       const sdk = new Stitch(client);
       const project = await sdk.createProject("Styio Community Functional Design");
